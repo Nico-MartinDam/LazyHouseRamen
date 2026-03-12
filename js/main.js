@@ -529,7 +529,7 @@ function renderMenuItems(categoryIndex) {
             setTimeout(() => {
                 categoryHeadingEl.textContent = catName;
                 categoryHeadingEl.classList.remove('fade-out');
-            }, 300);
+            }, 500);
         }
     }
 
@@ -595,7 +595,7 @@ function renderMenuItems(categoryIndex) {
                 itemsContainer.classList.remove('fade-out');
                 itemsContainer.classList.add('fade-in');
             });
-        }, 450);
+        }, 700);
     }
 }
 
