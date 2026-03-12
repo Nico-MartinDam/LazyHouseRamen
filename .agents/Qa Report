@@ -1,0 +1,140 @@
+# 🔍 QA Report — LazyHomeWeb (Full Site Audit)
+**Fecha:** 2026-03-10  
+**Archivos auditados:** `index.html`, `css/styles.css`, `js/main.js`, `assets/images/`, `menu/`
+
+---
+
+## 1. SEO — Sí, es necesario
+
+El sitio **necesita mejoras SEO** para poder posicionarse en búsquedas locales (Google Maps, "Japanese restaurant Khanom", etc.). Actualmente tiene lo mínimo (`<title>` y un `<meta description>`), pero faltan elementos importantes.
+
+### Hallazgos actuales
+
+| Elemento | Estado | Detalles |
+|:---|:---:|:---|
+| `<title>` | ✅ | `Lazy House | Japanese Restaurant` — Correcto |
+| `<meta description>` | ⚠️ | Existe pero no tiene palabras clave locales (Khanom, Nakhon Si Thammarat) |
+| `<meta keywords>` | ❌ | No existe |
+| Favicon | ❌ | No existe — Afecta credibilidad y SEO indirecta |
+| Open Graph (`og:*`) | ❌ | No hay — Las vistas previas en Facebook/LINE/WhatsApp no muestran imagen ni descripción |
+| Twitter Cards | ❌ | No hay |
+| `robots.txt` | ❌ | No existe |
+| `sitemap.xml` | ❌ | No existe |
+| Structured Data (JSON-LD) | ❌ | No hay Schema.org para Restaurant — Esto es **crítico** para Google Maps/búsquedas locales |
+| `<html lang>` | ⚠️ | Empieza como `en` pero JS lo cambia a `th` al cambiar idioma — OK, pero `hreflang` alternativo no existe |
+| `canonical` link | ❌ | No existe |
+| Alt text en imágenes | ⚠️ | La mayoría de imágenes de galería tienen `alt=""` (vacío) — No ayuda al SEO de imágenes |
+
+### 🎯 Propuesta SEO (priorizada)
+
+> [!IMPORTANT]
+> Las 3 primeras son las más impactantes para un restaurante local. Las demás son mejoras incrementales.
+
+| # | Acción | Prioridad | Detalle |
+|:---:|:---|:---:|:---|
+| 1 | **Structured Data JSON-LD (`Restaurant`)** | 🔴 Crítica | Agregar schema con nombre, dirección, teléfono, horario, tipo de cocina, URL de mapa. Google usa esto para el Knowledge Panel y Maps |
+| 2 | **Open Graph + Twitter Cards** | 🔴 Crítica | meta tags `og:title`, `og:description`, `og:image`, `og:url`, `og:type`. Sin esto, compartir por WhatsApp/LINE/Facebook muestra un enlace feo sin imagen |
+| 3 | **Favicon** | 🟠 Alta | Crear `.ico` + `.png` (192x192 y 512x512) desde el logo SVG. También un `manifest.json` para PWA básica |
+| 4 | **`meta description` mejorada** | 🟠 Alta | Incluir "Khanom", "Nakhon Si Thammarat", "ramen", "Japanese restaurant" |
+| 5 | **`canonical` link** | 🟡 Media | `<link rel="canonical" href="https://tudominio.com/">` |
+| 6 | **`robots.txt`** | 🟡 Media | Archivo básico permitiendo rastreo |
+| 7 | **`sitemap.xml`** | 🟡 Media | Al ser una sola página, es simple pero ayuda |
+| 8 | **Alt text descriptivos en galería** | 🟡 Media | Reemplazar `alt=""` por descripciones reales cuando tengan las fotos definitivas |
+
+---
+
+## 2. Seguridad — Estado actual
+
+> [!NOTE]
+> Para un sitio estático HTML/CSS/JS sin backend, la superficie de ataque es muy pequeña. Sin embargo, hay puntos a revisar.
+
+### Resultados
+
+| Aspecto | Estado | Archivo / Línea | Detalle |
+|:---|:---:|:---|:---|
+| XSS via `innerHTML` | ✅ Pass | `main.js` | No se usa `innerHTML` para datos dinámicos. Los items del menú se crean con `createElement` + `textContent` (L540-562). ✅ Seguro |
+| Fetch error handling | ✅ Pass | `main.js:434-456` | `fetch()` tiene `.catch()` con fallback |
+| External links `rel="noopener noreferrer"` | ✅ Pass | `index.html` | Todos los social links tienen `target="_blank" rel="noopener noreferrer"` |
+| Google Maps iframe | ✅ Pass | `index.html:288-292` | Usa `referrerpolicy="no-referrer-when-downgrade"` correctamente |
+| CSP headers | ⚠️ N/A | Servidor | No hay `Content-Security-Policy`. **Esto depende del hosting** (Netlify, Vercel, etc.). Se puede añadir como `<meta>` en HTML |
+| Mixed Content (HTTP/HTTPS) | ✅ Pass | — | Todos los recursos externos (Google Fonts, FontAwesome, Google Maps) usan HTTPS |
+| Exposed data en JS | ⚠️ Bajo | `main.js:6-26` | `AppConfig` incluye teléfono, email y dirección — Es info pública del negocio, así que no es un riesgo real |
+| Dependencies CDN | ⚠️ Media | `index.html:20` | FontAwesome se carga desde CDN sin `integrity` attribute (SRI hash). Si el CDN es comprometido, podrían inyectar código |
+
+### 🎯 Recomendaciones de seguridad
+
+| # | Acción | Prioridad | Detalle |
+|:---:|:---|:---:|:---|
+| 1 | **Añadir SRI a FontAwesome CDN** | 🟠 Alta | Agregar `integrity="sha384-..."` al `<link>` de FontAwesome en [index.html:20](file:///c:/Users/Window%2011/Documents/LazyHomeWeb/index.html#L20) |
+| 2 | **Añadir meta CSP básica** | 🟡 Media | Un `<meta http-equiv="Content-Security-Policy">` que permita solo fuentes conocidas |
+| 3 | **Headers de seguridad en hosting** | 🟡 Media | Al desplegar: `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`. Esto se configura en el hosting, no en el código |
+
+---
+
+## 3. Propuestas visuales
+
+> [!NOTE]
+> Nota: No me meto con las imágenes porque aún falta el shooting definitivo.
+
+### Elementos que consideraría cambiar
+
+| # | Zona | Estado actual | Propuesta | Prioridad |
+|:---:|:---|:---|:---|:---:|
+| 1 | **Footer: teléfono** | `+66 12 345 6789` — parece placeholder | Verificar si es el número real o actualizarlo. Archivo: [index.html:275](file:///c:/Users/Window%2011/Documents/LazyHomeWeb/index.html#L275) | 🔴 Crítica |
+| 2 | **Footer: email** | `hello@lazyhouse.com` — ¿es real? | Verificar dominio y email. Archivo: [index.html:276](file:///c:/Users/Window%2011/Documents/LazyHomeWeb/index.html#L276) | 🔴 Crítica |
+| 3 | **About section: imagen** | `31.png` (2MB PNG) | Cuando llegue el shooting, reemplazar por `.webp` optimizada. Actualmente carga 2MB por esta sola imagen. Archivo: [index.html:119](file:///c:/Users/Window%2011/Documents/LazyHomeWeb/index.html#L119) | 🟡 Pdte shooting |
+| 4 | **Hero CTA button** | Borde fino blanco, sin fondo | Visualmente correcto y elegante. Opcionalmente podría tener un leve `backdrop-filter: blur(4px)` para mejor legibilidad sobre fotos oscuras | 🟢 Baja |
+| 5 | **Gallery: `about-us.jpg`** | 8KB — se ve como un thumbnail roto o placeholder | Esta imagen en [Page 2](file:///c:/Users/Window%2011/Documents/LazyHomeWeb/index.html#L187) (8KB) contrasta mucho con las DSCF (15-17MB). Verificar si es intencional | 🟠 Alta |
+| 6 | **Peso de imágenes** | Los JPGs pesan entre 15-17MB cada uno | Incluso como provisionales, ese peso destroza el rendimiento. Un usuario móvil con 3G no carga esta página. Se debería comprimir a ~200-500KB por imagen para dev/testing | 🟠 Alta |
+
+---
+
+## 4. Checklist del Tester — Code Quality
+
+| Item | Estado | Detalles |
+|:---|:---:|:---|
+| HTML validity: tags cerrados, estructura | ✅ Pass | Estructura correcta, semántica con `<main>`, `<header>`, `<footer>`, `<nav>`, `<section>` |
+| CSS: custom properties definidas | ✅ Pass | Todas las variables usadas están definidas en `:root` |
+| CSS: sin reglas huérfanas | ✅ Pass | Todas las clases CSS se corresponden con elementos HTML |
+| JS: sin errores de consola evidentes | ✅ Pass | Null checks presentes, optional chaining (`?.`) usado correctamente |
+| JS: fetch error handling | ✅ Pass | `.catch()` con fallback a `FALLBACK_MENU` |
+| `menu.json` carga correctamente | ⚠️ N/A | No hay `menu.json` en `/menu/`. El sistema actual usa Google Sheets CSV live. El archivo `convert.js` no existe tampoco |
+| Language toggle | ✅ Pass | Cambia todos los textos `data-i18n`. `document.documentElement.lang` se actualiza |
+| Social links reales | ✅ Pass | Todos los links (Instagram, Facebook, LINE, WhatsApp) apuntan a URLs reales — no hay `#` placeholder |
+| `convert.js` simulation | ❌ N/A | El archivo `convert.js` no existe en `/menu/`. Solo hay `Owner_Instructions.md` |
+
+---
+
+## 5. Checklist del Tester — UX
+
+| Item | Estado | Detalles |
+|:---|:---:|:---|
+| Diseño vs design-system.md | ✅ Pass | Colores, tipografía, spacing, y layouts coinciden con el design system |
+| Responsive (breakpoints) | ✅ Pass | Media query en `992px`. Mobile-first approach correcto |
+| Smooth scroll con offset | ✅ Pass | Custom easing `initLazySmoothScroll()` con `headerOffset` de 80px |
+| Imágenes sin rutas rotas | ⚠️ Parcial | Todas las rutas existen en `assets/images/`, pero `about-us.jpg` es sospechosamente pequeña (8KB) |
+| Footer: contacto, mapa, social | ✅ Pass | Los 3 elementos presentes |
+| Header: logo, nav, social | ✅ Pass | Logo + 4 nav anchors + social icons en desktop y mobile |
+| Sin overflow de texto | ✅ Pass | Thai characters renderizan correctamente con Noto Sans/Serif Thai |
+
+---
+
+## 6. Resumen ejecutivo
+
+```
+✅ Pasados:  15
+⚠️ Parcial:   5
+❌ Faltantes:  2
+```
+
+### Top 3 acciones inmediatas (antes de lanzar)
+
+1. **SEO: Structured Data + Open Graph** — Sin esto, Google y redes sociales no muestran bien el restaurante
+2. **Verificar datos de contacto** — Teléfono y email parecen placeholders
+3. **Favicon** — El sitio se ve "inacabado" sin favicon en las pestañas del navegador
+
+### Acciones a evaluar contigo
+
+- ¿Implementamos el paquete SEO completo (JSON-LD + OG + favicon + robots.txt)?
+- ¿Añadimos SRI a FontAwesome y una meta CSP básica?
+- ¿Quieres que optimice las imágenes temporales para que el sitio cargue más rápido durante el desarrollo?

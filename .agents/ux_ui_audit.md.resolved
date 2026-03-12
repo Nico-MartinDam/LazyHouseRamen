@@ -1,0 +1,68 @@
+# UX/UI Design Audit & Aesthetic Refinements
+
+**Para: Frontend Developer** 
+**De: UX/UI Designer**
+
+He revisado la visualización del proyecto hasta el momento. El usuario principal (dueño del proyecto) tiene mucha razón: hemos llevado el concepto de espaciado ("Ma") demasiado lejos, al punto de que las secciones se ven desconectadas en lugar de elegantes. La estética actual requiere ajustes inmediatos para recuperar el toque *Shibui* (minimalismo refinado y funcional).
+
+Aquí tienes mi auditoría 100% honesta y las instrucciones exactas para corregir los estilos ([styles.css](file:///c:/Users/Window%2011/Documents/LazyHomeWeb/css/styles.css)):
+
+### 1. El Problema del Espaciado (Vacío Inconexo)
+Intentamos emular diseños súper editoriales como *The Largo*, pero nuestro contenido (textos e imágenes) no tiene el volumen suficiente para sostener saltos de `192px` o `128px`. En móviles, esto se ve como si la web estuviera rota o vacía.
+
+**✅ Instrucción Front:** Reemplaza las escalas estáticas en `:root` por funciones `clamp()` para que el espaciado sea fluido y mucho más contenido.
+
+```css
+/* REEMPLAZAR EN :root DE CSS */
+--space-md: clamp(1.5rem, 3vw, 2rem);       /* Element spacing */
+--space-lg: clamp(2.5rem, 5vw, 4rem);       /* Component inner padding */
+--space-xl: clamp(4rem, 8vw, 6rem);         /* Section padding */
+--space-section: clamp(6rem, 10vw, 8rem);   /* Reducido: Distancia entre secciones */
+```
+
+### 2. La Galería: Mampostería Rota
+En `.gallery-grid`, usar `gap: var(--space-xl)` destruye por completo el concepto de galería. Las fotos se ven aisladas verticalmente. Las galerías minimalistas deben leerse como un bloque unificado o una composición curada.
+
+**✅ Instrucción Front:**  
+Reduce el gap drásticamente para unir las obras de arte.
+```css
+.gallery-grid {
+    display: flex;
+    flex-direction: column;
+    /* CAMBIAR EL GAP */
+    gap: var(--space-sm); /* o var(--space-md) como máximo */
+}
+```
+
+### 3. Estética del Menú: Las Líneas Punteadas
+En `.menu-item-header` tienes `border-bottom: 1px dotted rgba(44, 54, 67, 0.2);`. Las líneas punteadas para unir el nombre del plato con el precio evocan inmediatamente la sensación de un cuaderno escolar, una cafetería o un "diner" retro de los 90s. Es exactamente lo opuesto a la elegancia japonesa.
+
+**✅ Instrucción Front:**
+Elimina la línea punteada. Si usas flex con `justify-content: space-between`, la propia estructura y el espacio negativo guiarán el ojo. Si absolutamente necesitas una guía, usa una línea ultra-suave sólida.
+```css
+.menu-item-header {
+    /* ... */
+    /* CAMBIAR O ELIMINAR EL BORDER */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05); 
+    /* Yo prefiero border-bottom: none; y dejar que respire */
+    padding-bottom: 8px;
+}
+```
+
+### 4. Coherencia de Botones (Filos vs Curvas)
+Las estéticas Wabi-Sabi y minimalistas modernas no se llevan muy bien con radios de borde pequeños y tímidos (`border-radius: 2px` en `.cta-button`). O la forma es puramente orgánica (como un círculo/óvalo) o tiene filos crujientes que denotan arquitectura moderna y limpieza.
+
+**✅ Instrucción Front:**
+Vuelve el botón completamente afilado.
+```css
+.cta-button {
+    /* ... */
+    border-radius: 0; /* Filos rectos premium */
+}
+```
+
+### 5. Reconocimiento (¡Buen Trabajo!)
+Como nota positiva, felicita de mi parte al front por el truco del iframe del mapa gris en el footer (`filter: grayscale...`) y la animación ultra sencilla de `pageLoad` al inicio. Son esos micros detalles los que sí construyen una buena experiencia de usuario, sin estorbar.
+
+---
+**Siguiente Paso:** Aplica primero el ajuste de tipografías y espaciado fluido (`clamp()`). Verás que de inmediato la página deja de sentirse "larga y aburrida" para sentirse conectada y con pulso.
