@@ -302,19 +302,20 @@
         <!-- Menu Section -->
         <section id="menu" class="section menu-section">
             <div class="menu-container">
-                <div class="menu-sidebar">
+                <!-- Top-left: Menu title -->
+                <div class="menu-header">
                     <h2 class="heading-display" data-i18n="nav_menu" style="margin-bottom: var(--space-xs);">Menu</h2>
-                    <span class="section-japanese-subtitle"
-                        style="display: block; margin-bottom: var(--space-md);">お品書き</span>
-                    <div id="category-nav" class="category-list">
-                        <!-- Loaded dynamically via JS -->
-                    </div>
+                    <span class="section-japanese-subtitle">お品書き</span>
                 </div>
-                <div class="menu-content">
-                    <h3 id="active-category-name" class="menu-category-heading heading-serif"></h3>
-                    <div id="menu-items-container" class="menu-items-grid">
-                        <!-- Loaded dynamically via JS -->
-                    </div>
+                <!-- Top-right: Active category name -->
+                <h3 id="active-category-name" class="menu-category-heading heading-serif"></h3>
+                <!-- Bottom-left: Category tabs -->
+                <div id="category-nav" class="category-list">
+                    <!-- Loaded dynamically via JS -->
+                </div>
+                <!-- Bottom-right: Scrollable dishes -->
+                <div id="menu-items-container" class="menu-items-grid">
+                    <!-- Loaded dynamically via JS -->
                 </div>
             </div>
         </section>
