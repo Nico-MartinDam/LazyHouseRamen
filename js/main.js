@@ -511,63 +511,92 @@ function renderMenuCategories() {
 
 function renderMenuItems(categoryIndex) {
     const itemsContainer = document.getElementById('menu-items-container');
+    const categoryHeadingEl = document.getElementById('active-category-name');
     if (!itemsContainer || !menuData) return;
 
-    itemsContainer.innerHTML = '';
-    itemsContainer.style.opacity = '0';
+    const category = menuData.categories[categoryIndex];
+    if (!category || !category.items) return;
+
+    // Update sidebar category heading with smooth fade
+    const catName = currentLanguage === 'th' && category.name_th ? category.name_th : category.name_en;
+    const isFirstLoad = itemsContainer.children.length === 0;
+
+    if (categoryHeadingEl) {
+        if (isFirstLoad) {
+            categoryHeadingEl.textContent = catName;
+        } else {
+            categoryHeadingEl.classList.add('fade-out');
+            setTimeout(() => {
+                categoryHeadingEl.textContent = catName;
+                categoryHeadingEl.classList.remove('fade-out');
+            }, 300);
+        }
+    }
 
     // ARIA tabpanel (P1-07)
     itemsContainer.setAttribute('role', 'tabpanel');
     itemsContainer.setAttribute('aria-labelledby', `category-tab-${categoryIndex}`);
 
-    const category = menuData.categories[categoryIndex];
-    if (!category || !category.items) return;
+    // Helper: build the menu items into the container
+    const buildItems = () => {
+        itemsContainer.innerHTML = '';
 
-    // Heading hierarchy: h3 for category name (P1-01)
-    const categoryHeading = document.createElement('h3');
-    categoryHeading.className = 'menu-category-heading heading-serif';
-    const catName = currentLanguage === 'th' && category.name_th ? category.name_th : category.name_en;
-    categoryHeading.textContent = catName;
-    itemsContainer.appendChild(categoryHeading);
+        category.items.forEach(item => {
+            const itemName = currentLanguage === 'th' && item.name_th ? item.name_th : item.name_en;
+            const itemDesc = currentLanguage === 'th' && item.description_th ? item.description_th : item.description_en;
 
-    category.items.forEach(item => {
-        const itemName = currentLanguage === 'th' && item.name_th ? item.name_th : item.name_en;
-        const itemDesc = currentLanguage === 'th' && item.description_th ? item.description_th : item.description_en;
+            const itemEl = document.createElement('div');
+            itemEl.className = 'menu-item scroll-reveal active';
 
-        // Build DOM programmatically — no innerHTML (P1-02)
-        const itemEl = document.createElement('div');
-        itemEl.className = 'menu-item scroll-reveal active';
+            const headerEl = document.createElement('div');
+            headerEl.className = 'menu-item-header';
 
-        const headerEl = document.createElement('div');
-        headerEl.className = 'menu-item-header';
+            const nameEl = document.createElement('h4');
+            nameEl.className = 'menu-item-name';
+            nameEl.textContent = itemName;
 
-        const nameEl = document.createElement('h4');
-        nameEl.className = 'menu-item-name';
-        nameEl.textContent = itemName;
+            const priceEl = document.createElement('div');
+            priceEl.className = 'menu-item-price';
+            priceEl.textContent = `${item.price} ฿`;
 
-        const priceEl = document.createElement('div');
-        priceEl.className = 'menu-item-price';
-        priceEl.textContent = `${item.price} ฿`;
+            headerEl.appendChild(nameEl);
+            headerEl.appendChild(priceEl);
+            itemEl.appendChild(headerEl);
 
-        headerEl.appendChild(nameEl);
-        headerEl.appendChild(priceEl);
-        itemEl.appendChild(headerEl);
+            if (itemDesc) {
+                const descEl = document.createElement('p');
+                descEl.className = 'menu-item-desc';
+                descEl.textContent = itemDesc;
+                itemEl.appendChild(descEl);
+            }
 
-        if (itemDesc) {
-            const descEl = document.createElement('p');
-            descEl.className = 'menu-item-desc';
-            descEl.textContent = itemDesc;
-            itemEl.appendChild(descEl);
-        }
+            itemsContainer.appendChild(itemEl);
+        });
+    };
 
-        itemsContainer.appendChild(itemEl);
-    });
+    if (isFirstLoad) {
+        // First load: build immediately with a gentle fade-in
+        buildItems();
+        itemsContainer.classList.add('fade-out');
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                itemsContainer.classList.remove('fade-out');
+                itemsContainer.classList.add('fade-in');
+            });
+        });
+    } else {
+        // Category switch: crossfade (fade out → rebuild → fade in)
+        itemsContainer.classList.add('fade-out');
+        itemsContainer.classList.remove('fade-in');
 
-    // Fade in
-    setTimeout(() => {
-        itemsContainer.style.transition = 'opacity var(--transition-slow)';
-        itemsContainer.style.opacity = '1';
-    }, 50);
+        setTimeout(() => {
+            buildItems();
+            requestAnimationFrame(() => {
+                itemsContainer.classList.remove('fade-out');
+                itemsContainer.classList.add('fade-in');
+            });
+        }, 450);
+    }
 }
 
 
