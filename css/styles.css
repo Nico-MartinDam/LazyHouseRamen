@@ -852,6 +852,7 @@ h3 {
 .menu-category-heading {
     font-size: clamp(1.3rem, 3vw, 1.8rem);
     color: var(--color-text);
+    grid-column: 1 / -1;
     margin-top: 0;
     margin-bottom: var(--space-sm);
     line-height: 1.2;
@@ -861,8 +862,9 @@ h3 {
     position: sticky;
     top: var(--header-height);
     background-color: var(--color-bg);
-    padding: var(--space-xs) 0;
-    z-index: 1;
+    padding: var(--space-md) 0 var(--space-xs) 0;
+    z-index: 2;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.05);
 }
 
 .menu-category-heading.fade-out {
