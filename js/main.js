@@ -511,6 +511,7 @@ function renderMenuCategories() {
 
 function renderMenuItems(categoryIndex) {
     const itemsContainer = document.getElementById('menu-items-container');
+    const categoryHeadingEl = document.getElementById('active-category-name');
     if (!itemsContainer || !menuData) return;
 
     const category = menuData.categories[categoryIndex];
@@ -519,21 +520,27 @@ function renderMenuItems(categoryIndex) {
     const catName = currentLanguage === 'th' && category.name_th ? category.name_th : category.name_en;
     const isFirstLoad = itemsContainer.children.length === 0;
 
+    // Update the static heading element (outside the scrollable grid)
+    if (categoryHeadingEl) {
+        if (isFirstLoad) {
+            categoryHeadingEl.textContent = catName;
+        } else {
+            categoryHeadingEl.classList.add('fade-out');
+            setTimeout(() => {
+                categoryHeadingEl.textContent = catName;
+                categoryHeadingEl.classList.remove('fade-out');
+            }, 500);
+        }
+    }
+
     // ARIA tabpanel (P1-07)
     itemsContainer.setAttribute('role', 'tabpanel');
     itemsContainer.setAttribute('aria-labelledby', `category-tab-${categoryIndex}`);
 
-    // Helper: build the menu items into the container
+    // Helper: build only the dish items
     const buildItems = () => {
         itemsContainer.innerHTML = '';
 
-        // 1. Build the sticky category heading first (spans all columns)
-        const categoryHeading = document.createElement('h3');
-        categoryHeading.className = 'menu-category-heading heading-serif';
-        categoryHeading.textContent = catName;
-        itemsContainer.appendChild(categoryHeading);
-
-        // 2. Build the dishes
         category.items.forEach(item => {
             const itemName = currentLanguage === 'th' && item.name_th ? item.name_th : item.name_en;
             const itemDesc = currentLanguage === 'th' && item.description_th ? item.description_th : item.description_en;
@@ -565,10 +572,12 @@ function renderMenuItems(categoryIndex) {
 
             itemsContainer.appendChild(itemEl);
         });
+
+        // Scroll the grid back to top when switching categories
+        itemsContainer.scrollTop = 0;
     };
 
     if (isFirstLoad) {
-        // First load: build immediately with a gentle fade-in
         buildItems();
         itemsContainer.classList.add('fade-out');
         requestAnimationFrame(() => {
