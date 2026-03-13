@@ -754,8 +754,13 @@ h3 {
     gap: var(--space-md);
 }
 
-.menu-header {
-    display: block;
+.menu-sidebar {
+    width: 100%;
+}
+
+.menu-content {
+    display: flex;
+    flex-direction: column;
 }
 
 .category-list {
@@ -1136,42 +1141,31 @@ h3 {
         grid-row: 3 / 4;
     }
 
-    /* Menu Desktop Layout — 2×2 grid matching wireframe */
+    /* Menu Desktop Layout — independent columns */
     .menu-container {
-        display: grid;
-        grid-template-columns: 200px 1fr;
-        grid-template-rows: auto 1fr;
-        gap: 0 var(--space-xl);
+        flex-direction: row;
+        gap: var(--space-xl);
     }
 
-    .menu-header {
-        grid-column: 1;
-        grid-row: 1;
-        padding-bottom: var(--space-md);
-    }
-
-    .menu-category-heading {
-        grid-column: 2;
-        grid-row: 1;
-        align-self: end;
-        padding-bottom: var(--space-md);
+    .menu-sidebar {
+        width: 200px;
+        min-width: 200px;
     }
 
     .category-list {
-        grid-column: 1;
-        grid-row: 2;
         flex-direction: column;
         overflow-x: visible;
         border-bottom: none;
         border-right: 1px solid rgba(44, 54, 67, 0.1);
         padding-bottom: 0;
         padding-right: var(--space-md);
-        align-self: start;
+    }
+
+    .menu-content {
+        flex: 1;
     }
 
     .menu-items-grid {
-        grid-column: 2;
-        grid-row: 2;
         display: grid;
         grid-template-columns: 1fr 1fr;
         max-height: 55vh;
