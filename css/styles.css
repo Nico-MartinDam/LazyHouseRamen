@@ -234,10 +234,11 @@ h3 {
 /* =========================================
    HEADER (MOBILE FIRST)
    ========================================= */
+/* Update CSS Custom Properties Base */
 #site-header {
-    --header-text-color: var(--color-white);
-    /* Light color for transparent state over dark hero */
-    --header-icon-bg: rgba(255, 255, 255, 0.1);
+    /* Set dark text and icons permanently */
+    --header-text-color: var(--color-text);
+    --header-icon-bg: rgba(0, 0, 0, 0.03);
 
     position: fixed;
     top: 0;
@@ -246,9 +247,13 @@ h3 {
     min-height: var(--header-height);
     height: auto;
     z-index: 1000;
-    background-color: transparent;
-    /* Initial state: transparent */
-    border-bottom: 1px solid transparent;
+    
+    /* Initialize solid state permanently at all scroll points */
+    background-color: rgba(247, 245, 240, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(44, 54, 67, 0.05);
+    
     transition: transform var(--transition-slow), background-color var(--transition-slow), border-color var(--transition-slow), color var(--transition-slow);
     display: flex;
     align-items: center;
@@ -263,12 +268,11 @@ h3 {
 }
 
 #site-header.header-solid {
+    /* Redundant now that default is solid, but kept for JS backward compatibility */
     background-color: rgba(247, 245, 240, 0.95);
-    /* var(--color-bg) with opacity */
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(44, 54, 67, 0.05);
-    /* very subtle border */
 
     /* Switch to dark colors for light background */
     --header-text-color: var(--color-text);
@@ -462,7 +466,7 @@ h3 {
     align-items: center;
     padding: 0;
     min-height: 100vh;
-    background-image: url('../assets/images/Hero-img.jpeg');
+    background-image: url('../assets/images/Hero-img.WEBP');
     background-size: cover;
     background-position: center;
     background-color: var(--color-text);
@@ -478,8 +482,8 @@ h3 {
     left: 0;
     width: 100%;
     height: 100%;
-    /* Gradient overlay: slightly darker in the center where text sits */
-    background: radial-gradient(circle at center, rgba(44, 54, 67, 0.6) 0%, rgba(44, 54, 67, 0.3) 100%);
+    /* Gradient overlay: softened slightly to let the new lighter hero image breathe, while still anchoring white text */
+    background: radial-gradient(circle at center, rgba(44, 54, 67, 0.4) 0%, rgba(44, 54, 67, 0.15) 100%);
     z-index: 1;
 }
 
@@ -692,34 +696,13 @@ h3 {
     right: var(--space-sm);
 }
 
-/* ---- Carousel Dots ---- */
-.gallery-dots {
+/* ---- Carousel Controls (Arrows + Progress Slider) ---- */
+.gallery-controls {
     display: flex;
     justify-content: center;
-    gap: var(--space-xs);
+    align-items: center;
+    gap: var(--space-lg);
     margin-top: var(--space-lg);
-    position: relative;
-    z-index: 15;
-}
-
-.gallery-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(44, 54, 67, 0.2);
-    cursor: pointer;
-    padding: 0;
-    transition: background var(--transition-medium), transform var(--transition-medium);
-}
-
-.gallery-dot:hover {
-    background: rgba(44, 54, 67, 0.4);
-}
-
-.gallery-dot.active {
-    background: var(--color-text);
-    transform: scale(1.3);
 }
 
 /* Mobile category scroll fade-hint */
@@ -751,12 +734,14 @@ h3 {
     padding: 0 var(--space-lg);
     display: flex;
     flex-direction: column;
-    gap: var(--space-md); /* Harmonized with Gallery title gap globally */
+    gap: var(--space-md);
+    /* Harmonized with Gallery title gap globally */
 }
 
 .menu-header.text-center {
     text-align: center;
-    margin-bottom: 0; /* Reduced from var(--space-sm) */
+    margin-bottom: 0;
+    /* Reduced from var(--space-sm) */
 }
 
 .menu-nav-wrapper {
@@ -765,31 +750,38 @@ h3 {
     position: relative;
     /* Mathematically pull up the wrapper to negate the padding-top of the buttons, matching Gallery strictly */
     margin-top: calc(var(--space-sm) * -1);
-    padding-bottom: var(--space-xs); /* Extra space for the new progress bar */
+    padding-bottom: var(--space-xs);
+    /* Extra space for the new progress bar */
 }
 
-/* Elegant Scroll Progress Indicator */
-.menu-scroll-progress {
+/* Elegant Scroll Progress Indicator (Universal Component) */
+.custom-scroll-progress {
     width: 60px;
     height: 3px;
     background: rgba(44, 54, 67, 0.1);
     border-radius: 4px;
-    margin: var(--space-sm) auto 0;
     overflow: hidden;
-    position: absolute;
-    bottom: -1px; /* Align to the border bottom naturally */
-    left: 50%;
-    transform: translateX(-50%);
-    display: none; /* Managed by JS */
+    position: relative;
 }
 
-.menu-scroll-progress-bar {
+.custom-scroll-progress-bar {
     width: 20px;
     height: 100%;
     background: var(--color-accent-red);
     border-radius: 4px;
     /* Hardware accelerated transform */
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
     will-change: transform;
+}
+
+/* Menu Specific positioning for the progress bar */
+.menu-nav-wrapper .custom-scroll-progress {
+    position: absolute;
+    bottom: -1px; /* Align to the border bottom naturally */
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    display: none; /* Managed by JS purely for Menu */
 }
 
 /* Visual cue that it's scrollable (fade edge) */
@@ -819,7 +811,8 @@ h3 {
     gap: var(--space-lg);
     padding-bottom: 0;
     justify-content: flex-start;
-    cursor: grab; /* hint that it's draggable */
+    cursor: grab;
+    /* hint that it's draggable */
 }
 
 .category-list.horizontal-scroll:active {
@@ -860,17 +853,20 @@ h3 {
 }
 
 .category-btn:hover {
-    color: var(--color-text); /* Highlight text mildly on hover */
+    color: var(--color-text);
+    /* Highlight text mildly on hover */
 }
 
 .category-btn:hover::after,
 .category-btn.active::after {
-    transform: scaleX(1); /* Show red underline on hover and active */
+    transform: scaleX(1);
+    /* Show red underline on hover and active */
 }
 
 .category-btn.active {
     font-weight: 700;
-    color: var(--color-accent-red); /* Only turn text completely red when strictly active */
+    color: var(--color-accent-red);
+    /* Only turn text completely red when strictly active */
 }
 
 .menu-category-header {
@@ -929,7 +925,8 @@ h3 {
     display: flex;
     flex-direction: column;
     gap: var(--space-xs);
-    padding-right: var(--space-xl); /* Enforce right boundary so prices never touch neighboring items */
+    padding-right: var(--space-xl);
+    /* Enforce right boundary so prices never touch neighboring items */
 }
 
 .menu-item-header {
@@ -937,7 +934,8 @@ h3 {
     justify-content: space-between;
     align-items: baseline;
     gap: var(--space-md);
-    border-bottom: 1px dotted rgba(44, 54, 67, 0.2); /* Classic dotted leader for readability */
+    border-bottom: 1px dotted rgba(44, 54, 67, 0.2);
+    /* Classic dotted leader for readability */
     padding-bottom: 6px;
 }
 
@@ -1214,7 +1212,8 @@ h3 {
     .category-list.horizontal-scroll {
         display: flex;
         justify-content: flex-start;
-        width: 100%; /* Avoid max-content/margin auto bug causing WebKit horizontal clipping bleed */
+        width: 100%;
+        /* Avoid max-content/margin auto bug causing WebKit horizontal clipping bleed */
         max-width: 100%;
         border-bottom: none;
     }
@@ -1226,7 +1225,8 @@ h3 {
     .menu-items-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: var(--space-xl) var(--space-section); /* Massive column gap to fully separate items */
+        gap: var(--space-xl) var(--space-section);
+        /* Massive column gap to fully separate items */
     }
 
     /* Footer Desktop Grid */
@@ -1261,27 +1261,35 @@ h3 {
    MOBILE OPTIMIZATIONS
    ========================================= */
 @media (max-width: 768px) {
+
     /* Menu Item Density & Padding */
     .menu-container {
-        padding: 0 var(--space-sm); /* Regain horizontal space */
-        gap: var(--space-md); /* Match gallery gap */
+        padding: 0 var(--space-sm);
+        /* Regain horizontal space */
+        gap: var(--space-md);
+        /* Match gallery gap */
     }
-    
+
     .menu-item-name {
-        font-size: 1rem; /* Prevent wrapping overflow */
+        font-size: 1rem;
+        /* Prevent wrapping overflow */
     }
-    
+
     .menu-item-price {
-        font-size: 0.95rem; /* Better tandem sizing */
-        padding-left: var(--space-xs); /* Tighter dotted line fit */
+        font-size: 0.95rem;
+        /* Better tandem sizing */
+        padding-left: var(--space-xs);
+        /* Tighter dotted line fit */
     }
 
     .menu-item-header {
-        gap: var(--space-xs); /* Keep them compact horizontally */
+        gap: var(--space-xs);
+        /* Keep them compact horizontally */
     }
 
     .menu-item {
-        padding-right: 0; /* Remove desktop right barrier on narrow mobile screens */
+        padding-right: 0;
+        /* Remove desktop right barrier on narrow mobile screens */
     }
 }
 

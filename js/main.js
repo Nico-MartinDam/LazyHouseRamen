@@ -658,14 +658,23 @@ function initGalleryCarousel() {
     if (!carousel) return;
 
     const pages = carousel.querySelectorAll('.gallery-page');
-    const dots = carousel.querySelectorAll('.gallery-dot');
-    const prevBtn = carousel.querySelector('.gallery-arrow--prev');
-    const nextBtn = carousel.querySelector('.gallery-arrow--next');
+    const prevBtn = carousel.querySelector('.gallery-arrow--prev') || carousel.querySelector('.prev-page');
+    const nextBtn = carousel.querySelector('.gallery-arrow--next') || carousel.querySelector('.next-page');
+    const progressBar = carousel.querySelector('.custom-scroll-progress-bar');
+    
     if (pages.length === 0) return;
 
     let currentPage = 0;
     let isTransitioning = false;
     const FADE_DURATION = 600; // Must match CSS transition duration
+
+    function updateProgressBar(index) {
+        if (progressBar && pages.length > 1) {
+            const scrollPercent = index / (pages.length - 1);
+            const maxTranslate = 40; // 60px track - 20px thumb
+            progressBar.style.transform = `translateX(${scrollPercent * maxTranslate}px)`;
+        }
+    }
 
     function goToPage(index) {
         if (isTransitioning || index === currentPage || index < 0 || index >= pages.length) return;
@@ -680,10 +689,8 @@ function initGalleryCarousel() {
 
         incoming.classList.add('active');
 
-        // Update dots immediately for responsiveness
-        dots.forEach((dot, i) => {
-            dot.classList.toggle('active', i === index);
-        });
+        // Update progress bar immediately for responsiveness
+        updateProgressBar(index);
 
         // After transition completes, clean up
         setTimeout(() => {
@@ -692,6 +699,9 @@ function initGalleryCarousel() {
             isTransitioning = false;
         }, FADE_DURATION);
     }
+
+    // Initialize progress bar position
+    updateProgressBar(currentPage);
 
     function nextPage() {
         const next = (currentPage + 1) % pages.length;
@@ -706,14 +716,6 @@ function initGalleryCarousel() {
     // Arrow click events
     prevBtn?.addEventListener('click', prevPage);
     nextBtn?.addEventListener('click', nextPage);
-
-    // Dot click events
-    dots.forEach(dot => {
-        dot.addEventListener('click', () => {
-            const pageIndex = parseInt(dot.getAttribute('data-page'), 10);
-            goToPage(pageIndex);
-        });
-    });
 
     // Touch swipe support (mobile)
     let touchStartX = 0;
@@ -960,17 +962,17 @@ function initCategoryDragScroll(slider) {
     // Handle fade-edge wrapper hint and Scroll Progress Bar
     const wrapper = slider.closest('.menu-nav-wrapper');
     if (wrapper) {
-        let progressTrack = wrapper.querySelector('.menu-scroll-progress');
+        let progressTrack = wrapper.querySelector('.custom-scroll-progress');
         let progressBar = null;
         if (!progressTrack) {
             progressTrack = document.createElement('div');
-            progressTrack.className = 'menu-scroll-progress';
+            progressTrack.className = 'custom-scroll-progress';
             progressBar = document.createElement('div');
-            progressBar.className = 'menu-scroll-progress-bar';
+            progressBar.className = 'custom-scroll-progress-bar';
             progressTrack.appendChild(progressBar);
             wrapper.appendChild(progressTrack);
         } else {
-            progressBar = progressTrack.querySelector('.menu-scroll-progress-bar');
+            progressBar = progressTrack.querySelector('.custom-scroll-progress-bar');
         }
 
         const checkScroll = () => {

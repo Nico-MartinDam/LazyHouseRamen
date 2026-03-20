@@ -250,19 +250,20 @@
                         </div>
                     </div>
 
-                    <!-- Carousel Arrows -->
-                    <button class="gallery-arrow gallery-arrow--prev" aria-label="Previous page">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <button class="gallery-arrow gallery-arrow--next" aria-label="Next page">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
+                    <!-- Carousel Controls (Arrows + Progress Slider) -->
+                    <div class="gallery-controls">
+                        <button class="gallery-arrow gallery-arrow--prev prev-page" aria-label="Previous page">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        
+                        <!-- Gallery Progress Slider -->
+                        <div class="custom-scroll-progress gallery-progress" role="progressbar" aria-label="Gallery pages progress">
+                            <div class="custom-scroll-progress-bar"></div>
+                        </div>
 
-                    <!-- Carousel Dots -->
-                    <div class="gallery-dots" role="tablist" aria-label="Gallery pages">
-                        <button class="gallery-dot active" aria-label="Page 1" data-page="0"></button>
-                        <button class="gallery-dot" aria-label="Page 2" data-page="1"></button>
-                        <button class="gallery-dot" aria-label="Page 3" data-page="2"></button>
+                        <button class="gallery-arrow gallery-arrow--next next-page" aria-label="Next page">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
                     </div>
                 </div>
             </div>
