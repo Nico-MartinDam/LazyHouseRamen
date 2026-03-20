@@ -924,6 +924,8 @@ h3 {
     font-family: var(--font-heading);
     font-weight: 700;
     font-size: 1.1rem;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .menu-item-desc {
