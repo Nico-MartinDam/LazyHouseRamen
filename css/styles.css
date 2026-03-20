@@ -611,6 +611,7 @@ h3 {
 }
 
 /* Mobile: single image per row, stacked */
+
 .gallery-page-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -943,12 +944,6 @@ h3 {
     flex-shrink: 0;
 }
 
-.menu-item-desc {
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
-    margin-top: var(--space-xs);
-}
-
 /* =========================================
    FOOTER SECTION
    ========================================= */
@@ -1213,10 +1208,9 @@ h3 {
     }
 
     .menu-items-grid {
-        display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: var(--space-xl) var(--space-section);
-        /* Massive column gap to fully separate items */
+        gap: var(--space-md) var(--space-section);
+        /* Tightened vertical gap to keep single-line items structured harmoniously */
     }
 
     /* Footer Desktop Grid */

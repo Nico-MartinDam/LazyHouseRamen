@@ -545,7 +545,6 @@ function renderMenuItems(categoryIndex) {
 
         category.items.forEach(item => {
             const itemName = currentLanguage === 'th' && item.name_th ? item.name_th : item.name_en;
-            const itemDesc = currentLanguage === 'th' && item.description_th ? item.description_th : item.description_en;
 
             const itemEl = document.createElement('div');
             itemEl.className = 'menu-item scroll-reveal active';
@@ -564,13 +563,6 @@ function renderMenuItems(categoryIndex) {
             headerEl.appendChild(nameEl);
             headerEl.appendChild(priceEl);
             itemEl.appendChild(headerEl);
-
-            if (itemDesc) {
-                const descEl = document.createElement('p');
-                descEl.className = 'menu-item-desc';
-                descEl.textContent = itemDesc;
-                itemEl.appendChild(descEl);
-            }
 
             itemsContainer.appendChild(itemEl);
         });
