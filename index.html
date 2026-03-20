@@ -302,15 +302,27 @@
         <!-- Menu Section -->
         <section id="menu" class="section menu-section">
             <div class="menu-container">
-                <div class="menu-sidebar">
+                <!-- 1. Menu Title (Centered) -->
+                <div class="menu-header text-center">
                     <h2 class="heading-display" data-i18n="nav_menu" style="margin-bottom: var(--space-xs);">Menu</h2>
                     <span class="section-japanese-subtitle">お品書き</span>
-                    <div id="category-nav" class="category-list">
+                </div>
+
+                <!-- 2. Category Nav (Horizontal) -->
+                <div class="menu-nav-wrapper">
+                    <div id="category-nav" class="category-list horizontal-scroll">
                         <!-- Loaded dynamically via JS -->
                     </div>
                 </div>
-                <div class="menu-content">
+
+                <!-- 3. Category Heading with Line -->
+                <div class="menu-category-header">
                     <h3 id="active-category-name" class="menu-category-heading heading-serif"></h3>
+                    <div class="heading-line"></div>
+                </div>
+
+                <!-- 4. Dishes Grid -->
+                <div class="menu-content">
                     <div id="menu-items-container" class="menu-items-grid">
                         <!-- Loaded dynamically via JS -->
                     </div>
