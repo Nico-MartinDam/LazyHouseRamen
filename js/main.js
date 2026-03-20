@@ -507,6 +507,8 @@ function renderMenuCategories() {
 
         navContainer.appendChild(btn);
     });
+
+    initCategoryDragScroll(navContainer);
 }
 
 function renderMenuItems(categoryIndex) {
@@ -898,4 +900,57 @@ function initLazySmoothScroll() {
             });
         });
     });
+}
+
+// --- Horizontal Drag-to-Scroll for Categories ---
+function initCategoryDragScroll(slider) {
+    if (!slider || slider.dataset.dragInitialized) return;
+    slider.dataset.dragInitialized = 'true';
+
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    slider.addEventListener('mousedown', (e) => {
+        isDown = true;
+        slider.style.cursor = 'grabbing';
+        startX = e.pageX - slider.offsetLeft;
+        scrollLeft = slider.scrollLeft;
+    });
+
+    slider.addEventListener('mouseleave', () => {
+        isDown = false;
+        slider.style.cursor = 'grab';
+    });
+
+    slider.addEventListener('mouseup', () => {
+        isDown = false;
+        slider.style.cursor = 'grab';
+    });
+
+    slider.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - slider.offsetLeft;
+        const walk = (x - startX) * 2; // Scroll-fast multiplier
+        slider.scrollLeft = scrollLeft - walk;
+    });
+
+    // Handle fade-edge wrapper hint
+    const wrapper = slider.closest('.menu-nav-wrapper');
+    if (wrapper) {
+        const checkScroll = () => {
+            // Give a 5px buffer for rounding errors
+            const isAtEnd = slider.scrollWidth - slider.scrollLeft <= slider.clientWidth + 5;
+            if (isAtEnd) {
+                wrapper.classList.add('is-at-end');
+            } else {
+                wrapper.classList.remove('is-at-end');
+            }
+        };
+        slider.addEventListener('scroll', checkScroll, { passive: true });
+        window.addEventListener('resize', checkScroll, { passive: true });
+        // Initial check
+        setTimeout(checkScroll, 100); 
+    }
 }
