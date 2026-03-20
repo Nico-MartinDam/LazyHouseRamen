@@ -819,16 +819,7 @@ h3 {
     position: relative;
 }
 
-.category-btn:hover {
-    color: var(--color-text);
-}
-
-.category-btn.active {
-    font-weight: 700;
-    color: var(--color-accent-red);
-}
-
-.category-btn.active::after {
+.category-btn::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -836,6 +827,23 @@ h3 {
     width: 100%;
     height: 2px;
     background-color: var(--color-accent-red);
+    transform: scaleX(0);
+    transition: transform var(--transition-medium);
+    transform-origin: center;
+}
+
+.category-btn:hover {
+    color: var(--color-text); /* Highlight text mildly on hover */
+}
+
+.category-btn:hover::after,
+.category-btn.active::after {
+    transform: scaleX(1); /* Show red underline on hover and active */
+}
+
+.category-btn.active {
+    font-weight: 700;
+    color: var(--color-accent-red); /* Only turn text completely red when strictly active */
 }
 
 .menu-category-header {
@@ -1139,10 +1147,10 @@ h3 {
         margin-top: calc(var(--space-xl) * -0.5);
     }
 
-    /* Gallery Desktop Bento — 5 images per page */
+    /* Gallery Desktop Bento — 3 images per page */
     .gallery-page-grid {
         grid-template-columns: repeat(4, 1fr);
-        grid-auto-rows: 220px;
+        grid-auto-rows: 260px;
         gap: var(--space-md);
     }
 
@@ -1156,28 +1164,16 @@ h3 {
         grid-row: 1 / 3;
     }
 
-    /* Pos 2: Small right-top left */
+    /* Pos 2: Small right-top */
     .gallery-page-grid .gallery-bento-item:nth-child(2) {
-        grid-column: 3 / 4;
-        grid-row: 1 / 2;
-    }
-
-    /* Pos 3: Small right-top right */
-    .gallery-page-grid .gallery-bento-item:nth-child(3) {
-        grid-column: 4 / 5;
-        grid-row: 1 / 2;
-    }
-
-    /* Pos 4: Large right-bottom (spans 2 cols × 2 rows, same height as pos 1) */
-    .gallery-page-grid .gallery-bento-item:nth-child(4) {
         grid-column: 3 / 5;
-        grid-row: 2 / 4;
+        grid-row: 1 / 2;
     }
 
-    /* Pos 5: Medium left-bottom (spans 2 cols) */
-    .gallery-page-grid .gallery-bento-item:nth-child(5) {
-        grid-column: 1 / 3;
-        grid-row: 3 / 4;
+    /* Pos 3: Small right-bottom */
+    .gallery-page-grid .gallery-bento-item:nth-child(3) {
+        grid-column: 3 / 5;
+        grid-row: 2 / 3;
     }
 
     /* Menu Desktop Layout — Stacked Centered */
@@ -1229,6 +1225,34 @@ h3 {
     }
 
 
+}
+
+/* =========================================
+   MOBILE OPTIMIZATIONS
+   ========================================= */
+@media (max-width: 768px) {
+    /* Menu Item Density & Padding */
+    .menu-container {
+        padding: 0 var(--space-sm); /* Regain horizontal space */
+        gap: var(--space-md); /* Match gallery gap */
+    }
+    
+    .menu-item-name {
+        font-size: 1rem; /* Prevent wrapping overflow */
+    }
+    
+    .menu-item-price {
+        font-size: 0.95rem; /* Better tandem sizing */
+        padding-left: var(--space-xs); /* Tighter dotted line fit */
+    }
+
+    .menu-item-header {
+        gap: var(--space-xs); /* Keep them compact horizontally */
+    }
+
+    .menu-item {
+        padding-right: 0; /* Remove desktop right barrier on narrow mobile screens */
+    }
 }
 
 /* =========================================

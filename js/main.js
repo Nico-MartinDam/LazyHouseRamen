@@ -936,6 +936,27 @@ function initCategoryDragScroll(slider) {
         slider.scrollLeft = scrollLeft - walk;
     });
 
+    // Organic bounce animation to instantly hint horizontal scrolling on mobile and desktop
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Only bounce if there's actually hidden content to reveal
+                    if (slider.scrollWidth > slider.clientWidth) {
+                        setTimeout(() => {
+                            slider.scrollBy({ left: 45, behavior: 'smooth' });
+                            setTimeout(() => {
+                                slider.scrollTo({ left: 0, behavior: 'smooth' });
+                            }, 400); // bring it back organically
+                        }, 500); // short delay after it comes into view
+                    }
+                    obs.unobserve(slider);
+                }
+            });
+        }, { threshold: 0.8 }); // Trigger when 80% visible
+        observer.observe(slider);
+    }
+
     // Handle fade-edge wrapper hint
     const wrapper = slider.closest('.menu-nav-wrapper');
     if (wrapper) {
