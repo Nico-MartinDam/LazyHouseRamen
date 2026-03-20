@@ -662,12 +662,12 @@ function initGalleryCarousel() {
     const prevBtn = carousel.querySelector('.gallery-arrow--prev') || carousel.querySelector('.prev-page');
     const nextBtn = carousel.querySelector('.gallery-arrow--next') || carousel.querySelector('.next-page');
     const progressBar = carousel.querySelector('.custom-scroll-progress-bar');
-    
+
     if (pages.length === 0 || !track) return;
 
     function updateUI() {
         const maxScroll = track.scrollWidth - track.clientWidth;
-        
+
         // 1. Fluid progress bar calculation based directly on pixel scroll
         if (progressBar && maxScroll > 0) {
             const scrollPercent = track.scrollLeft / maxScroll;
@@ -936,7 +936,7 @@ function initCategoryDragScroll(slider) {
 
         const checkScroll = () => {
             const maxScroll = slider.scrollWidth - slider.clientWidth;
-            
+
             // 1. Fade-edge hint logic
             // Give a 5px buffer for rounding errors
             const isAtEnd = maxScroll - slider.scrollLeft <= 5;
@@ -954,7 +954,7 @@ function initCategoryDragScroll(slider) {
                 // Calculate percentage (0.0 to 1.0)
                 const scrollPercent = slider.scrollLeft / maxScroll;
                 // Track width (60px) - Bar width (20px) = Max travel distance (40px)
-                const maxTranslate = 40; 
+                const maxTranslate = 40;
                 if (progressBar) {
                     progressBar.style.transform = `translateX(${scrollPercent * maxTranslate}px)`;
                 }
@@ -964,6 +964,6 @@ function initCategoryDragScroll(slider) {
         slider.addEventListener('scroll', checkScroll, { passive: true });
         window.addEventListener('resize', checkScroll, { passive: true });
         // Initial check
-        setTimeout(checkScroll, 100); 
+        setTimeout(checkScroll, 100);
     }
 }

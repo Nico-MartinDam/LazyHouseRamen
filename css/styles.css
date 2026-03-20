@@ -247,13 +247,13 @@ h3 {
     min-height: var(--header-height);
     height: auto;
     z-index: 1000;
-    
+
     /* Initialize solid state permanently at all scroll points */
     background-color: rgba(247, 245, 240, 0.95);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(44, 54, 67, 0.05);
-    
+
     transition: transform var(--transition-slow), background-color var(--transition-slow), border-color var(--transition-slow), color var(--transition-slow);
     display: flex;
     align-items: center;
@@ -593,7 +593,8 @@ h3 {
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Hide scrollbar Firefox */
+    scrollbar-width: none;
+    /* Hide scrollbar Firefox */
 }
 
 /* Hide scrollbar Chrome, Edge, Safari */
@@ -764,11 +765,13 @@ h3 {
 /* Menu Specific positioning for the progress bar */
 .menu-nav-wrapper .custom-scroll-progress {
     position: absolute;
-    bottom: -1px; /* Align to the border bottom naturally */
+    bottom: -1px;
+    /* Align to the border bottom naturally */
     left: 50%;
     transform: translateX(-50%);
     margin: 0;
-    display: none; /* Managed by JS purely for Menu */
+    display: none;
+    /* Managed by JS purely for Menu */
 }
 
 /* Visual cue that it's scrollable (fade edge) */
