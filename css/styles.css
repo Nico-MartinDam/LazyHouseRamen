@@ -1178,17 +1178,19 @@ h3 {
         grid-row: 2 / 3;
     }
 
-    /* Menu Desktop Layout — Stacked Centered */
+    /* Menu Desktop Layout — Stacked Centered without clipping */
     .menu-nav-wrapper {
-        display: flex;
-        justify-content: center;
+        display: block;
+        width: 100%;
     }
 
     .category-list.horizontal-scroll {
-        justify-content: center;
-        /* Center tabs */
+        display: flex;
+        justify-content: flex-start; /* Never center overflowing items directly or they clip left */
+        width: max-content;
+        max-width: 100%;
+        margin: 0 auto; /* Center the whole container if it's smaller than max-width */
         border-bottom: none;
-        /* Let wrapper handle border */
     }
 
     .category-btn {
