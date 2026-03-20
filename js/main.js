@@ -657,86 +657,45 @@ function initGalleryCarousel() {
     const carousel = document.querySelector('.gallery-carousel');
     if (!carousel) return;
 
+    const track = carousel.querySelector('.gallery-carousel-track');
     const pages = carousel.querySelectorAll('.gallery-page');
     const prevBtn = carousel.querySelector('.gallery-arrow--prev') || carousel.querySelector('.prev-page');
     const nextBtn = carousel.querySelector('.gallery-arrow--next') || carousel.querySelector('.next-page');
     const progressBar = carousel.querySelector('.custom-scroll-progress-bar');
     
-    if (pages.length === 0) return;
+    if (pages.length === 0 || !track) return;
 
-    let currentPage = 0;
-    let isTransitioning = false;
-    const FADE_DURATION = 600; // Must match CSS transition duration
-
-    function updateProgressBar(index) {
-        if (progressBar && pages.length > 1) {
-            const scrollPercent = index / (pages.length - 1);
+    function updateUI() {
+        const maxScroll = track.scrollWidth - track.clientWidth;
+        
+        // 1. Fluid progress bar calculation based directly on pixel scroll
+        if (progressBar && maxScroll > 0) {
+            const scrollPercent = track.scrollLeft / maxScroll;
             const maxTranslate = 40; // 60px track - 20px thumb
             progressBar.style.transform = `translateX(${scrollPercent * maxTranslate}px)`;
         }
+
+        // 2. State management for arrows based on edges
+        if (prevBtn) prevBtn.disabled = track.scrollLeft <= 5;
+        if (nextBtn) nextBtn.disabled = track.scrollLeft >= maxScroll - 5;
     }
 
-    function goToPage(index) {
-        if (isTransitioning || index === currentPage || index < 0 || index >= pages.length) return;
-        isTransitioning = true;
+    // Bind seamlessly to the native CSS scroll physics
+    track.addEventListener('scroll', updateUI, { passive: true });
+    window.addEventListener('resize', updateUI, { passive: true });
 
-        const outgoing = pages[currentPage];
-        const incoming = pages[index];
-
-        // Start cross-fade: outgoing fades out, incoming fades in
-        outgoing.classList.remove('active');
-        outgoing.classList.add('fading-out');
-
-        incoming.classList.add('active');
-
-        // Update progress bar immediately for responsiveness
-        updateProgressBar(index);
-
-        // After transition completes, clean up
-        setTimeout(() => {
-            outgoing.classList.remove('fading-out');
-            currentPage = index;
-            isTransitioning = false;
-        }, FADE_DURATION);
+    function scrollByPage(direction) {
+        // Since each page is exactly 100% of the track container natively, we grab the clientWidth
+        const pageWidth = track.clientWidth;
+        const targetScroll = track.scrollLeft + (pageWidth * direction);
+        track.scrollTo({ left: targetScroll, behavior: 'smooth' });
     }
 
-    // Initialize progress bar position
-    updateProgressBar(currentPage);
+    prevBtn?.addEventListener('click', () => scrollByPage(-1));
+    nextBtn?.addEventListener('click', () => scrollByPage(1));
 
-    function nextPage() {
-        const next = (currentPage + 1) % pages.length;
-        goToPage(next);
-    }
-
-    function prevPage() {
-        const prev = (currentPage - 1 + pages.length) % pages.length;
-        goToPage(prev);
-    }
-
-    // Arrow click events
-    prevBtn?.addEventListener('click', prevPage);
-    nextBtn?.addEventListener('click', nextPage);
-
-    // Touch swipe support (mobile)
-    let touchStartX = 0;
-    let touchEndX = 0;
-    const swipeThreshold = 50;
-
-    carousel.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
-
-    carousel.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        const diff = touchStartX - touchEndX;
-        if (Math.abs(diff) > swipeThreshold) {
-            if (diff > 0) {
-                nextPage(); // Swipe left → next
-            } else {
-                prevPage(); // Swipe right → prev
-            }
-        }
-    }, { passive: true });
+    // Initialize initial state immediately
+    setTimeout(updateUI, 100);
 }
 
 // --- Gallery Lightbox (P2-03) ---

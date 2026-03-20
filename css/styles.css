@@ -587,39 +587,26 @@ h3 {
 }
 
 .gallery-carousel-track {
-    position: relative;
+    display: flex;
     width: 100%;
-    overflow: hidden;
-    /* Height is determined by the active page */
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Hide scrollbar Firefox */
+}
+
+/* Hide scrollbar Chrome, Edge, Safari */
+.gallery-carousel-track::-webkit-scrollbar {
+    display: none;
 }
 
 .gallery-page {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1),
-        visibility 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.gallery-page.active {
     position: relative;
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    z-index: 2;
-}
-
-/* Fading-out state (used by JS during transition) */
-.gallery-page.fading-out {
-    position: absolute;
-    opacity: 0;
-    visibility: visible;
-    pointer-events: none;
-    z-index: 1;
+    flex: 0 0 100%;
+    width: 100%;
+    scroll-snap-align: start;
+    /* Native scroll interaction takes care of visibility naturally */
 }
 
 /* Mobile: single image per row, stacked */
