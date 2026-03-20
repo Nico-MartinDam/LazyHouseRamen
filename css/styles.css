@@ -763,6 +763,33 @@ h3 {
     width: 100%;
     border-bottom: 1px solid rgba(44, 54, 67, 0.08);
     position: relative;
+    /* Mathematically pull up the wrapper to negate the padding-top of the buttons, matching Gallery strictly */
+    margin-top: calc(var(--space-sm) * -1);
+    padding-bottom: var(--space-xs); /* Extra space for the new progress bar */
+}
+
+/* Elegant Scroll Progress Indicator */
+.menu-scroll-progress {
+    width: 60px;
+    height: 3px;
+    background: rgba(44, 54, 67, 0.1);
+    border-radius: 4px;
+    margin: var(--space-sm) auto 0;
+    overflow: hidden;
+    position: absolute;
+    bottom: -1px; /* Align to the border bottom naturally */
+    left: 50%;
+    transform: translateX(-50%);
+    display: none; /* Managed by JS */
+}
+
+.menu-scroll-progress-bar {
+    width: 20px;
+    height: 100%;
+    background: var(--color-accent-red);
+    border-radius: 4px;
+    /* Hardware accelerated transform */
+    will-change: transform;
 }
 
 /* Visual cue that it's scrollable (fade edge) */

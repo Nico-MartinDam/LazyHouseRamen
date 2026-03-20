@@ -957,18 +957,49 @@ function initCategoryDragScroll(slider) {
         observer.observe(slider);
     }
 
-    // Handle fade-edge wrapper hint
+    // Handle fade-edge wrapper hint and Scroll Progress Bar
     const wrapper = slider.closest('.menu-nav-wrapper');
     if (wrapper) {
+        let progressTrack = wrapper.querySelector('.menu-scroll-progress');
+        let progressBar = null;
+        if (!progressTrack) {
+            progressTrack = document.createElement('div');
+            progressTrack.className = 'menu-scroll-progress';
+            progressBar = document.createElement('div');
+            progressBar.className = 'menu-scroll-progress-bar';
+            progressTrack.appendChild(progressBar);
+            wrapper.appendChild(progressTrack);
+        } else {
+            progressBar = progressTrack.querySelector('.menu-scroll-progress-bar');
+        }
+
         const checkScroll = () => {
+            const maxScroll = slider.scrollWidth - slider.clientWidth;
+            
+            // 1. Fade-edge hint logic
             // Give a 5px buffer for rounding errors
-            const isAtEnd = slider.scrollWidth - slider.scrollLeft <= slider.clientWidth + 5;
+            const isAtEnd = maxScroll - slider.scrollLeft <= 5;
             if (isAtEnd) {
                 wrapper.classList.add('is-at-end');
             } else {
                 wrapper.classList.remove('is-at-end');
             }
+
+            // 2. Progress bar logic
+            if (maxScroll <= 0) {
+                progressTrack.style.display = 'none';
+            } else {
+                progressTrack.style.display = 'block';
+                // Calculate percentage (0.0 to 1.0)
+                const scrollPercent = slider.scrollLeft / maxScroll;
+                // Track width (60px) - Bar width (20px) = Max travel distance (40px)
+                const maxTranslate = 40; 
+                if (progressBar) {
+                    progressBar.style.transform = `translateX(${scrollPercent * maxTranslate}px)`;
+                }
+            }
         };
+
         slider.addEventListener('scroll', checkScroll, { passive: true });
         window.addEventListener('resize', checkScroll, { passive: true });
         // Initial check
